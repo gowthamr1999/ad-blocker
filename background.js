@@ -73,14 +73,29 @@ function hideAdElements() {
   document.head.appendChild(style);
 }
 
-// Handle enable/disable toggle from popup
+// Track YouTube ads skipped
+let ytAdsSkipped = 0;
+
+// Handle messages from content scripts and popup
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === "GET_COUNT") {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const tabId = tabs[0]?.id;
-      sendResponse({ count: blockedCounts[tabId] || 0 });
+      sendResponse({
+        count: blockedCounts[tabId] || 0,
+        ytSkipped: ytAdsSkipped
+      });
     });
-    return true; // keep channel open for async response
+    return true;
+  }
+
+  if (msg.type === "YT_AD_SKIPPED") {
+    ytAdsSkipped++;
+    const tabId = sender.tab?.id;
+    if (tabId) {
+      blockedCounts[tabId] = (blockedCounts[tabId] || 0) + 1;
+      updateBadge(tabId);
+    }
   }
 
   if (msg.type === "TOGGLE") {

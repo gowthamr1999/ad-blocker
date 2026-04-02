@@ -4,22 +4,24 @@ const statusText = document.getElementById("status-text");
 const toggleSub = document.getElementById("toggle-sub");
 const pageCount = document.getElementById("page-count");
 const totalCount = document.getElementById("total-count");
+const ytCount = document.getElementById("yt-count");
 const reloadBtn = document.getElementById("reload-btn");
 const statsSection = document.getElementById("stats-section");
 
-let sessionTotal = 0;
-
 // Load saved state
-chrome.storage.sync.get(["enabled", "totalBlocked"], ({ enabled = true, totalBlocked = 0 }) => {
+chrome.storage.sync.get(["enabled", "totalBlocked", "ytSkipped"], ({ enabled = true, totalBlocked = 0, ytSkipped = 0 }) => {
   toggle.checked = enabled;
-  sessionTotal = totalBlocked;
   totalCount.textContent = formatCount(totalBlocked);
+  ytCount.textContent = formatCount(ytSkipped);
   updateUI(enabled);
 });
 
 // Get current page blocked count
 chrome.runtime.sendMessage({ type: "GET_COUNT" }, (res) => {
-  if (res) pageCount.textContent = formatCount(res.count);
+  if (res) {
+    pageCount.textContent = formatCount(res.count);
+    ytCount.textContent = formatCount(res.ytSkipped || 0);
+  }
 });
 
 // Toggle
@@ -40,7 +42,7 @@ reloadBtn.addEventListener("click", () => {
 function updateUI(enabled) {
   if (enabled) {
     statusDot.classList.remove("off");
-    statusText.textContent = "Active — blocking 20 ad networks";
+    statusText.textContent = "Active — 55 rules + YouTube skipper";
     toggleSub.textContent = "Blocking ads & trackers";
     statsSection.classList.remove("disabled-overlay");
   } else {

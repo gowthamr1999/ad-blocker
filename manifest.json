@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Simple Ad Blocker",
-  "version": "1.0",
-  "description": "Blocks ads and trackers before they load",
+  "name": "Ad Blocker Pro",
+  "version": "2.0",
+  "description": "Blocks ads, skips YouTube ads, and removes trackers",
   "permissions": [
     "declarativeNetRequest",
     "declarativeNetRequestFeedback",
@@ -20,6 +20,18 @@
       "128": "icons/icon128.png"
     }
   },
+  "content_scripts": [
+    {
+      "matches": ["*://*.youtube.com/*"],
+      "js": ["youtube.js"],
+      "run_at": "document_start"
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["cosmetic.js"],
+      "run_at": "document_end"
+    }
+  ],
   "declarative_net_request": {
     "rule_resources": [
       {
