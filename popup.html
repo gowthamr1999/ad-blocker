@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ad Blocker</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 280px;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0f0f13;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid #ffffff10;
+    }
+
+    .shield {
+      font-size: 28px;
+      filter: drop-shadow(0 0 8px #e74c3c88);
+    }
+
+    .header-text h1 {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .header-text p {
+      font-size: 11px;
+      color: #ffffff60;
+      margin-top: 2px;
+    }
+
+    .main {
+      padding: 16px 20px;
+    }
+
+    /* Toggle switch */
+    .toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #1a1a2e;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+      border: 1px solid #ffffff10;
+    }
+
+    .toggle-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #ffffffcc;
+    }
+
+    .toggle-sublabel {
+      font-size: 11px;
+      color: #ffffff40;
+      margin-top: 2px;
+    }
+
+    .switch {
+      position: relative;
+      width: 44px;
+      height: 24px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: #ffffff20;
+      border-radius: 24px;
+      transition: 0.3s;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background: white;
+      border-radius: 50%;
+      transition: 0.3s;
+    }
+
+    input:checked + .slider {
+      background: #e74c3c;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+
+    /* Stats */
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .stat-card {
+      background: #1a1a2e;
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+      border: 1px solid #ffffff08;
+    }
+
+    .stat-number {
+      font-size: 22px;
+      font-weight: 800;
+      color: #e74c3c;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      color: #ffffff50;
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Status bar */
+    .status-bar {
+      background: #1a1a2e;
+      border-radius: 10px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid #ffffff08;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #2ecc71;
+      flex-shrink: 0;
+      animation: pulse 2s infinite;
+    }
+
+    .status-dot.off {
+      background: #e74c3c;
+      animation: none;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .status-text {
+      font-size: 12px;
+      color: #ffffff80;
+    }
+
+    /* Footer */
+    .footer {
+      padding: 10px 20px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .rule-count {
+      font-size: 10px;
+      color: #ffffff30;
+    }
+
+    .reload-btn {
+      font-size: 10px;
+      color: #e74c3c90;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+
+    .reload-btn:hover {
+      background: #e74c3c20;
+      color: #e74c3c;
+    }
+
+    .disabled-overlay {
+      opacity: 0.4;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="shield">🛡️</div>
+    <div class="header-text">
+      <h1>Ad Blocker</h1>
+      <p>Network-level protection</p>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="toggle-row">
+      <div>
+        <div class="toggle-label">Protection</div>
+        <div class="toggle-sublabel" id="toggle-sub">Blocking ads & trackers</div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="toggle" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="stats" id="stats-section">
+      <div class="stat-card">
+        <div class="stat-number" id="page-count">0</div>
+        <div class="stat-label">This Page</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="total-count">0</div>
+        <div class="stat-label">Total Blocked</div>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <div class="status-dot" id="status-dot"></div>
+      <div class="status-text" id="status-text">Active — blocking 20 ad networks</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span class="rule-count">20 rules active</span>
+    <button class="reload-btn" id="reload-btn">↺ Reload Tab</button>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
